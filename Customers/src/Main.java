@@ -2,11 +2,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class Main {
+    public static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         Customer ivanov = new Customer("Ivanov", "Ivan", "Ivanovich",
                 12345678, 353445);
         Customer sidorov = new Customer("Sidorov", "Ivan", "Andreevich",
@@ -17,43 +16,39 @@ public class Main {
                 12360034, 163587);
         Customer sergeev1 = new Customer("Sergeev", "Andrey", "Sergeevich",
                 12360034, 163587);
-        Customer[]customers = {ivanov, sidorov, petrov, sergeev, sergeev1};
-        CustomersDatabase database = new CustomersDatabase(customers);
-        sortInAlphabeticalOrder(database.getCustomers());
+        CustomersDatabase database = new CustomersDatabase(ivanov, sidorov, petrov, sergeev, sergeev1);
         System.out.println(Arrays.toString(database.getCustomers()));
-
-        System.out.println("Please enter credit card number interval (min and max):");
-        long min = Long.parseLong(reader.readLine());
-        long max = Long.parseLong(reader.readLine());
-
-        getCustomersFromInterval(database, min, max);
+        chooseOption(database);
     }
 
-    private static void sortInAlphabeticalOrder(Customer[] customers) {
-        Arrays.sort(customers, new Comparator<Customer>() {
-            @Override
-            public int compare(Customer o1, Customer o2) {
-                if(o1.getLastName().compareTo(o2.getLastName()) != 0)
-                    return o1.getLastName().compareTo(o2.getLastName());
-                else if(o1.getFirstName().compareTo(o2.getFirstName()) != 0)
-                    return o1.getFirstName().compareTo(o2.getFirstName());
-                else
-                    return o1.getMiddleName().compareTo(o2.getMiddleName());
+    private static void chooseOption(CustomersDatabase database) throws IOException {
+        boolean stop = false;
+        int option;
+        do{
+            System.out.println("Please choose one of the suggested options and enter its number.");
+            System.out.println("1. Display the list of customers in alphabetical order.");
+            System.out.println("2. Display a list of customers whose credit card number is in the specified interval.");
+            option = Integer.parseInt(reader.readLine());
+            if(option == 1 || option == 2) stop = true;
+            else System.out.println("Please try again");
+        } while (!stop);
+        getListOfCustomers(option, database);
+    }
+
+    private static void getListOfCustomers(int option, CustomersDatabase database) throws IOException {
+        switch (option) {
+            case 1 -> {
+                database.sortInAlphabeticalOrder();
+                for (int i = 0; i < database.getCustomers().length; i++) {
+                        System.out.println(database.getCustomers()[i]);
+                }
             }
-        });
-    }
-
-    private static void getCustomersFromInterval(CustomersDatabase data, long min, long max) {
-        long temp;
-        if(min > max) {
-            temp = max;
-            max = min;
-            min = temp;
-        }
-        for (int i = 0; i < data.getCustomers().length; i++) {
-            if(data.getCustomers()[i].getCreditCardNumber() >= min &&
-                    data.getCustomers()[i].getCreditCardNumber() <= max)
-                System.out.println(data.getCustomers()[i]);
+            case 2 -> {
+                System.out.println("Please enter credit card number interval (min and max):");
+                long min = Long.parseLong(reader.readLine());
+                long max = Long.parseLong(reader.readLine());
+                database.getCustomersFromInterval(min, max);
+            }
         }
     }
 }
