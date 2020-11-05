@@ -23,12 +23,16 @@ public class Main {
 
     private static void chooseOption(CustomersDatabase database) throws IOException {
         boolean stop = false;
-        int option;
+        int option = 0;
         do{
             System.out.println("Please choose one of the suggested options and enter its number.");
             System.out.println("1. Display the list of customers in alphabetical order.");
             System.out.println("2. Display a list of customers whose credit card number is in the specified interval.");
-            option = Integer.parseInt(reader.readLine());
+            try {
+                option = Integer.parseInt(reader.readLine());
+            } catch (Exception e) {
+                System.out.println("Invalid data.");
+            }
             if(option == 1 || option == 2) stop = true;
             else System.out.println("Please try again");
         } while (!stop);
